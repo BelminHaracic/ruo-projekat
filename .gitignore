@@ -1,0 +1,12 @@
+*.tfstate
+*.tfstate.*
+.terraform/
+tfplan
+.env
+*.pem
+*.key
+id_*
+vault.yml
+.vault_pass
+*.qcow2
+__pycache__/

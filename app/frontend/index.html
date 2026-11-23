@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="bs">
+<head><meta charset="utf-8"><title>Bilježnica</title>
+<style>body{font-family:sans-serif;max-width:600px;margin:2rem auto}li{margin:.4rem 0}</style></head>
+<body>
+<h1>Bilježnica</h1>
+<input id="t" placeholder="Nova bilješka" size="40">
+<button onclick="dodaj()">Dodaj</button>
+<ul id="l"></ul>
+<script>
+async function ucitaj(){
+  const r = await fetch('/api/notes'); const n = await r.json();
+  document.getElementById('l').innerHTML = n.map(x =>
+    '<li>' + x.tekst.replace(/</g,'&lt;') + ' <button onclick="brisi(' + x.id + ')">x</button></li>').join('');
+}
+async function dodaj(){
+  const t = document.getElementById('t');
+  if(!t.value) return;
+  await fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tekst:t.value})});
+  t.value=''; ucitaj();
+}
+async function brisi(id){ await fetch('/api/notes/'+id,{method:'DELETE'}); ucitaj(); }
+ucitaj();
+</script>
+</body></html>
