@@ -1,0 +1,17 @@
+key "ruo-tf" {
+    algorithm hmac-sha256;
+    secret "{{ vault_tsig_secret }}";
+};
+
+options {
+    directory "/var/cache/bind";
+    listen-on { any; };
+    recursion no;
+    dnssec-validation no;
+};
+
+zone "biljeznica.lab" {
+    type primary;
+    file "/var/cache/bind/biljeznica.lab.db";
+    update-policy { grant ruo-tf zonesub ANY; };
+};

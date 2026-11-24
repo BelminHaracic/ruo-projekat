@@ -10,3 +10,4 @@ vault.yml
 .vault_pass
 *.qcow2
 __pycache__/
+ansible/inventory.ini

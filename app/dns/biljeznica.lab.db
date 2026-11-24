@@ -1,0 +1,4 @@
+$TTL 300
+@   IN SOA ns.biljeznica.lab. admin.biljeznica.lab. 1 3600 600 86400 300
+@   IN NS  ns.biljeznica.lab.
+ns  IN A   172.28.2.2

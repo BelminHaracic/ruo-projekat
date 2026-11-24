@@ -1,0 +1,12 @@
+- name: Kod aplikacije (frontend, backend, compose)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../app/{{ item }}"
+    dest: /opt/biljeznica/
+    mode: preserve
+  loop: [frontend, backend, compose.yaml]
+
+- name: Pokretanje aplikacije
+  ansible.builtin.command: docker compose up -d --build
+  args: {chdir: /opt/biljeznica}
+  register: compose
+  changed_when: "'Started' in compose.stderr or 'Created' in compose.stderr or 'Recreated' in compose.stderr"

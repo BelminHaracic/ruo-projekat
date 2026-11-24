@@ -1,0 +1,4 @@
+- name: Isporuka aplikacije
+  hosts: app
+  become: true
+  roles: [app]

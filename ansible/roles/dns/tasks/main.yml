@@ -1,0 +1,21 @@
+- name: Direktorij aplikacije
+  ansible.builtin.file: {path: /opt/biljeznica, state: directory, mode: "0755"}
+
+- name: dns direktorij i compose.yaml
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../app/{{ item }}"
+    dest: /opt/biljeznica/
+    mode: preserve
+  loop: [dns, compose.yaml]
+
+- name: .env iz Vault tajne
+  ansible.builtin.template: {src: ../../app/templates/env.j2, dest: /opt/biljeznica/.env, mode: "0600"}
+
+- name: named.conf s TSIG tajnom
+  ansible.builtin.template: {src: named.conf.j2, dest: /opt/biljeznica/named.conf, mode: "0644"}
+
+- name: Pokretanje DNS servera
+  ansible.builtin.command: docker compose up -d --build dns
+  args: {chdir: /opt/biljeznica}
+  register: dnsup
+  changed_when: "'Started' in dnsup.stderr or 'Created' in dnsup.stderr or 'Recreated' in dnsup.stderr"

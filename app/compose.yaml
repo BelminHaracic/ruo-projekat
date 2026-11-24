@@ -1,34 +1,58 @@
 name: biljeznica
 
 services:
+  dns:
+    build: ./dns
+    restart: unless-stopped
+    volumes:
+      - bindzone:/var/cache/bind
+      - ./named.conf:/etc/bind/named.conf:ro
+    ports:
+      - "${DNS_PUBLISH_IP:-127.0.0.1}:53:53/udp"
+      - "${DNS_PUBLISH_IP:-127.0.0.1}:53:53/tcp"
+    networks:
+      web: {ipv4_address: 172.28.1.2}
+      app: {ipv4_address: 172.28.2.2}
+      db:  {ipv4_address: 172.28.3.2}
+
   frontend:
     build: ./frontend
+    restart: unless-stopped
     ports:
       - "8080:80"
-    networks: [web, app]
-    depends_on: [backend]
+    dns: [172.28.2.2]
+    networks:
+      web: {ipv4_address: 172.28.1.10}
+      app: {ipv4_address: 172.28.2.10}
+    depends_on: [dns, backend]
 
   backend:
     build: ./backend
+    restart: unless-stopped
     environment:
-      DB_HOST: db
+      DB_HOST: db.biljeznica.lab
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    networks: [app, db]
+    dns: [172.28.3.2]
+    networks:
+      app: {ipv4_address: 172.28.2.20}
+      db:  {ipv4_address: 172.28.3.20}
     depends_on:
       db:
         condition: service_healthy
 
   db:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks: [db]
+    networks:
+      db: {ipv4_address: 172.28.3.30}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -50,3 +74,4 @@ networks:
 
 volumes:
   pgdata:
+  bindzone:

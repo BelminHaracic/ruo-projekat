@@ -1,0 +1,4 @@
+- name: Osnova servera i DNS
+  hosts: app
+  become: true
+  roles: [docker, dns]
