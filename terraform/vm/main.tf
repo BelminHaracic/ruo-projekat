@@ -37,6 +37,7 @@ resource "libvirt_cloudinit_disk" "init" {
 
 resource "libvirt_domain" "vm" {
   name      = var.vm_name
+  type      = "qemu"
   memory    = var.memory_mb
   vcpu      = var.vcpu
   cloudinit = libvirt_cloudinit_disk.init.id
