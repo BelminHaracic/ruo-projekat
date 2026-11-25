@@ -1,0 +1,10 @@
+libvirt_cloudinit_disk.init: Refreshing state... [id=/var/lib/libvirt/images/app1-init.iso;8bc780fe-8863-4d1d-bc10-fdaab64cf052]
+libvirt_volume.base: Refreshing state... [id=/var/lib/libvirt/images/app1-base.qcow2]
+libvirt_volume.disk: Refreshing state... [id=/var/lib/libvirt/images/app1.qcow2]
+libvirt_domain.vm: Refreshing state... [id=55eea044-0e23-4a1f-ae4e-093ac66b8a48]
+local_file.inventory: Refreshing state... [id=4b808f6ef7880e268e35e3e3c08002a8c334ccd8]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

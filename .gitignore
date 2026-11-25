@@ -11,3 +11,5 @@ vault.yml
 *.qcow2
 __pycache__/
 ansible/inventory.ini
+*.img
+*.part

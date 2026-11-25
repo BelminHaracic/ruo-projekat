@@ -1,0 +1,29 @@
+##### DNS
+PASS frontend.biljeznica.lab -> 172.28.1.10
+PASS backend.biljeznica.lab -> 172.28.2.20
+PASS db.biljeznica.lab -> 172.28.3.30
+PASS ns.biljeznica.lab -> 172.28.2.2
+TXT: "upravlja: terraform"
+SOA: ns.biljeznica.lab. admin.biljeznica.lab. 7 3600 600 86400 300
+PASS update bez kljuca -> REFUSED
+##### Izolacija (na VM)
+== 1: frontend -> backend.biljeznica.lab:8000 mora PROCI (kontrola da nc radi)
+PASS
+== 2: frontend razrjesava db.biljeznica.lab (DNS radi, pa pad u testu 3 nije zbog imena)
+Name:	db.biljeznica.lab
+Address: 172.28.3.30
+== 3: frontend -> db.biljeznica.lab:5432 mora PASTI (nema mreznog puta)
+PASS
+== 4: backend -> db.biljeznica.lab:5432 mora PROCI
+PASS
+== 5: port 5432 nije otvoren na VM-u
+PASS
+== 6: podaci baze su na volumenu (AO-10)
+/var/lib/docker/volumes/biljeznica_pgdata/_data
+PASS
+##### Aplikacija
+{"status":"ready"}  PASS ready
+PASS dodana biljeska id=2
+PASS biljeska se vidi u listi
+PASS obrisana biljeska 2
+PASS 5432 nije dostupan izvana

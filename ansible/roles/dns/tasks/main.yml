@@ -18,4 +18,5 @@
   ansible.builtin.command: docker compose up -d --build dns
   args: {chdir: /opt/biljeznica}
   register: dnsup
-  changed_when: "'Started' in dnsup.stderr or 'Created' in dnsup.stderr or 'Recreated' in dnsup.stderr"
+  # gledam samo statusne redove kontejnera, ne build log
+  changed_when: dnsup.stderr is search('Container [^ ]+ +(Created|Recreated|Started)')

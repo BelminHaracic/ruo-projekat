@@ -4,9 +4,12 @@
     dest: /opt/biljeznica/
     mode: preserve
   loop: [frontend, backend, compose.yaml]
+  register: kod
 
+# --build samo kad se kod promijenio; ako slika ne postoji, compose je ionako sam izgradi
 - name: Pokretanje aplikacije
-  ansible.builtin.command: docker compose up -d --build
+  ansible.builtin.command: "docker compose up -d {{ '--build' if kod.changed else '' }}"
   args: {chdir: /opt/biljeznica}
   register: compose
-  changed_when: "'Started' in compose.stderr or 'Created' in compose.stderr or 'Recreated' in compose.stderr"
+  # gledam samo statusne redove kontejnera, ne build log
+  changed_when: compose.stderr is search('Container [^ ]+ +(Created|Recreated|Started)')

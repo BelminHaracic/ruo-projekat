@@ -1,4 +1,19 @@
 - name: Osnova servera i DNS
   hosts: app
   become: true
+  gather_facts: false
+  pre_tasks:
+    # nova VM pod QEMU emulacijom se sporo diže, pa čekam SSH
+    - name: Čekam da VM bude dostupna preko SSH
+      ansible.builtin.wait_for_connection: {timeout: 900}
+
+    # cloud-init radi apt update, bez ovoga se sudari s docker rolom oko apt locka
+    - name: Čekam da cloud-init završi
+      ansible.builtin.command: cloud-init status --wait
+      register: ci
+      changed_when: false
+      failed_when: ci.rc not in [0, 2]
+
+    - name: Prikupljanje podataka o VM
+      ansible.builtin.setup:
   roles: [docker, dns]
