@@ -130,7 +130,7 @@ Odstupanja od preporučene strukture: `app/dns/` (BIND je dio istog compose proj
 
 ### 6.1 Preduslovi
 
-Testirano na Windows 11 + WSL2 (Ubuntu 24.04).
+Testirano na Windowsu + WSL2 (Ubuntu 24.04).
 
 ```bash
 sudo apt update
@@ -149,14 +149,14 @@ virsh -c qemu:///system net-autostart default
 
 > **Napomena o KVM-u:** u mom WSL2 okruženju KVM akceleracija ne radi (`/dev/kvm` postoji, ali libvirt
 > javlja `accel 'kvm' is not supported`). Zato je u `terraform/vm/main.tf` postavljeno `type = "qemu"`,
-> pa VM radi pod softverskom emulacijom. Sve radi isto, samo sporije: podizanje od nule traje
-> oko [X] minuta. Na računaru s ispravnim KVM-om dovoljno je promijeniti `type` u `"kvm"`.
+> pa VM radi pod softverskom emulacijom. Sve radi isto, samo sporije, posebno podizanje od nule
+> i build slika. Na računaru s ispravnim KVM-om dovoljno je promijeniti `type` u `"kvm"`.
 > Detaljnije u ADR-u za DO-2.
 
 ### 6.2 Podizanje, test i uklanjanje
 
 ```bash
-git clone <link na repozitorij> projekat && cd projekat
+git clone https://github.com/BelminHaracic/ruo-projekat.git projekat && cd projekat
 make check      # da li su svi alati tu, SSH ključ, libvirt mreža
 make all        # image -> infra -> config -> dns -> deploy
 make test       # DNS, izolacija, aplikacija
@@ -188,7 +188,7 @@ cijeli stack se digne sam, `/api/ready` vraća `{"status":"ready"}`.
 
 ## 7. Idempotentnost (AO-5)
 
-Drugo izvršavanje playbooka mora dati `changed=0`. Za `docker compose up` (task `command`) Ansible ne zna
+Drugo izvršavanje playbooka mora dati `changed=0`. Isto važi i za `site.yml` (rola `dns`). Za `docker compose up` (task `command`) Ansible ne zna
 sam da li se nešto promijenilo, pa:
 
 - `--build` se dodaje samo kad je task kopiranja koda javio promjenu (`kod.changed`). Ranije se slika gradila

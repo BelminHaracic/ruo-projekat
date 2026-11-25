@@ -7,6 +7,7 @@
     dest: /opt/biljeznica/
     mode: preserve
   loop: [dns, compose.yaml]
+  register: dnskod
 
 - name: .env iz Vault tajne
   ansible.builtin.template: {src: ../../app/templates/env.j2, dest: /opt/biljeznica/.env, mode: "0600"}
@@ -14,8 +15,9 @@
 - name: named.conf s TSIG tajnom
   ansible.builtin.template: {src: named.conf.j2, dest: /opt/biljeznica/named.conf, mode: "0644"}
 
+# isto kao u app roli: --build samo kad se promijenio dns direktorij
 - name: Pokretanje DNS servera
-  ansible.builtin.command: docker compose up -d --build dns
+  ansible.builtin.command: "docker compose up -d {{ '--build' if dnskod.changed else '' }} dns"
   args: {chdir: /opt/biljeznica}
   register: dnsup
   # gledam samo statusne redove kontejnera, ne build log
