@@ -149,8 +149,8 @@ virsh -c qemu:///system net-autostart default
 
 > **Napomena o KVM-u:** u mom WSL2 okruženju KVM akceleracija ne radi (`/dev/kvm` postoji, ali libvirt
 > javlja `accel 'kvm' is not supported`). Zato je u `terraform/vm/main.tf` postavljeno `type = "qemu"`,
-> pa VM radi pod softverskom emulacijom. Sve radi isto, samo sporije, posebno podizanje od nule
-> i build slika. Na računaru s ispravnim KVM-om dovoljno je promijeniti `type` u `"kvm"`.
+> pa VM radi pod softverskom emulacijom. Sve radi isto, samo sporije: `make all` od nule traje oko 33 minute,
+> a drugo pokretanje (bez promjena) oko 6 minuta. Na računaru s ispravnim KVM-om dovoljno je promijeniti `type` u `"kvm"`.
 > Detaljnije u ADR-u za DO-2.
 
 ### 6.2 Podizanje, test i uklanjanje
@@ -162,6 +162,9 @@ make all        # image -> infra -> config -> dns -> deploy
 make test       # DNS, izolacija, aplikacija
 make destroy    # brisanje DNS zapisa, pa VM-a
 ```
+
+Izmjereno kod mene: `make destroy` pa `make all` od nule je trajalo 33 min, `make test` je prošao,
+a drugo `make all` je dalo Terraform `0 changed` (VM i DNS) i `changed=0` za oba playbooka.
 
 Aplikacija je nakon `make all` na `http://<vm_ip>:8080` (`terraform -chdir=terraform/vm output vm_ip`).
 
